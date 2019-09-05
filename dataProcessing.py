@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import re
 import operator
+import csv
 
 rawData = open("dataPretty.html", "r")
 qB = open("qBNames.html", "r")
@@ -44,41 +45,77 @@ def rankings(toCalc):
             else:
                 finalDict[player[0]] = finalDict[player[0]] + player[1][statType] * weights[statType]  
         statType += 1
+
+    
     
     sortedFinal = sorted(finalDict.items(), key = lambda e: e[1])
-    print(sortedFinal)
+    sortedFinalList = []
 
-for message in data:
-    try:
-        wantedData = int(message.text.strip())
-    except:
-        continue
-    #print(wantedData)
-    statsList.append(wantedData)
+    counter = 1
+    for key in sortedFinal:
+        key = list(key)
+        key[1] = counter
+        sortedFinalList.append(key)
+        counter += 1
 
-for eachName in names:
-    wantedName = eachName.text.strip()
-    #print(wantedName)
-    namesList.append(wantedName)
+    finalRank = sortedFinalList
+    return finalRank
 
-# 3(pyards) 4(ptd) 5(int) 7(ryards) 8(rtd)
-counter = 0
-for name in namesList:
-    fullDict[name] = [ statsList[10*counter + 3] ]
-    index = 0
-    while index < 10:
-        if index == 4 or index == 5 or index == 7 or index == 8:
-            fullDict[name].append( statsList[10*counter + index] )
-        index += 1
-    counter += 1
+def prettyPrint():
+    download_dir = "finallyFinished.csv" #where you want the file to be downloaded to 
+
+    csv = open(download_dir, "w") 
+    #"w" indicates that you're writing strings to the file
+
+    bestPlayer = "\n You should pick up " + finalRank[0][0] + " for this gameweek!\n\n"
+    csv.write(bestPlayer)
+
+    #columnTitleRow = "rank    name\n"
+    #csv.write(columnTitleRow)
+
+    for item in finalRank:
+        name = item[0]
+        rank = str(item[1])
+        if item[1] < 10:
+            row = "  " + rank + "     " + name + "\n"
+        else:
+            row = " " + rank + "     " + name + "\n"
+        csv.write(row)
+    csv.write("\n")
+
+
+def setup():
+    for message in data:
+        try:
+            wantedData = int(message.text.strip())
+        except:
+            continue
+    
+        statsList.append(wantedData)
+
+    for eachName in names:
+        wantedName = eachName.text.strip()
+        namesList.append(wantedName)
+
+    # 3(pyards) 4(ptd) 5(int) 7(ryards) 8(rtd)
+    counter = 0
+    for name in namesList:
+        fullDict[name] = [ statsList[10*counter + 3] ]
+        index = 0
+        while index < 10:
+            if index == 4 or index == 5 or index == 7 or index == 8:
+                fullDict[name].append( statsList[10*counter + index] )
+            index += 1
+        counter += 1
 
 
 
 
 
-
-
-rankings(fullDict)
+#print(finalRank)
+setup()
+finalRank = rankings(fullDict)
+prettyPrint()
 
 #print(fullDict)
 #getPosition (2, fullDict)
