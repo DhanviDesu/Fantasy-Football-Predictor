@@ -3,7 +3,7 @@ import re
 import operator
 
 rawData = open("dataPretty.html", "r")
-qB = open("qBNames.html", "r")
+qB = open("qBNames.html", "r") # Change to RB names
 stats = BeautifulSoup(rawData.read(), "html.parser")
 people = BeautifulSoup(qB.read(), "html.parser")
 
@@ -16,10 +16,10 @@ namesList = []
 fullDict = {}
 finalDict = {}
 finalRank = []
-weights = [40, 30, -10, 25, 15]
+weights = [25, 15, 10, 30, 20]
 
 #formula:  rank each person based on each cat, then rank by highest ave in each cat, (lowest in inteceptions), 
-#35*pYards+25 * ptd + 10*int + 20*ryards + 10*rtd
+#25*RCYards+15 * RCTD + 10*y/rc + 30*ryards + 20*rtd
 
 
 
@@ -61,7 +61,7 @@ for eachName in names:
     #print(wantedName)
     namesList.append(wantedName)
 
-# 3(pyards) 4(ptd) 5(int) 7(ryards) 8(rtd)
+# 3(rcyards) 4(rctd) 5(y/rc) 7(ryards) 8(rtd)
 counter = 0
 for name in namesList:
     fullDict[name] = [ statsList[10*counter + 3] ]
